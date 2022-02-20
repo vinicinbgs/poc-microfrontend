@@ -1,6 +1,8 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
-const {ModuleFederationPlugin} = require("webpack").container;
+const { ModuleFederationPlugin } = require("webpack").container;
 const ExternalTemplateRemotesPlugin = require("external-remotes-plugin");
+const deps = require('./package.json').dependencies;
+
 const path = require("path");
 
 module.exports = {
@@ -8,7 +10,10 @@ module.exports = {
   mode: "development",
   devServer: {
     static: path.join(__dirname, "dist"),
-    port: 3001,
+    port: 3201,
+  },
+  resolve: {
+    extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
     publicPath: "auto",
@@ -16,22 +21,26 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
+        test: /\.(jsx|tsx|ts|js)$/,
         loader: "babel-loader",
         exclude: /node_modules/,
         options: {
-          presets: ["@babel/preset-react"],
+          presets: ["@babel/preset-react", "@babel/preset-typescript"],
         },
       },
     ],
   },
   plugins: [
     new ModuleFederationPlugin({
-      name: "app1",
+      name: "container",
       remotes: {
-        app2: "app2@[app2Url]/remoteEntry.js",
+        ui: "ui@[uiUrl]/remoteEntry.js",
       },
-      shared: {react: {singleton: true}, "react-dom": {singleton: true}},
+      shared: [
+        { react: { singleton: true }, requiredVersion: deps['react'] },
+        { "react-dom": { singleton: true, requiredVersion: deps['react-dom'] } },
+        { "react-router-dom": { singleton: true, requiredVersion: deps['react-router-dom'] } },
+      ],
     }),
     new ExternalTemplateRemotesPlugin(),
     new HtmlWebpackPlugin({
