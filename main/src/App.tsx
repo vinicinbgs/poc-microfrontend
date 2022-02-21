@@ -1,6 +1,8 @@
 import * as React from "react";
 import { Suspense } from "react";
 
+import "./global.css";
+
 import {
   Routes,
   Route,
@@ -8,10 +10,10 @@ import {
 } from "react-router-dom";
 
 // @ts-ignore
-const Navbar = React.lazy(() => import("ui/App"));
+//const Navbar = React.lazy(() => import("ui/App"));
+const Navbar = React.lazy(() => import("ui/Navbar"));
 
 import routes from './routes';
-
 
 const App = () => {
   return (

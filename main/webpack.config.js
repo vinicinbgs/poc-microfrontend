@@ -28,6 +28,18 @@ module.exports = {
           presets: ["@babel/preset-react", "@babel/preset-typescript"],
         },
       },
+      {
+        test: /\.(css)$/,
+        use: [
+            'style-loader',
+            {
+                loader: 'css-loader',
+                options: {
+                    modules: false
+                }
+            }
+        ]
+    },
     ],
   },
   plugins: [
